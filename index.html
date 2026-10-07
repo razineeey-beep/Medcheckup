@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MedAI — Understand Your Health Reports</title>
+
+<style>
+:root{
+    --bg:#0d1526;
+    --bg2:#111b2e;
+    --card:#192437;
+    --card2:#1d2a3e;
+    --border:#273752;
+    --blue:#3f86f5;
+    --blue2:#2474ee;
+    --cyan:#27b7d9;
+    --green:#23d3a5;
+    --red:#ff5b63;
+    --yellow:#f5bd4f;
+    --text:#f5f7fb;
+    --muted:#91a2bd;
+    --max:1240px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    overflow-x:hidden;
+}
+
+a{
+    color:inherit;
+    text-decoration:none;
+}
+
+button{
+    font-family:inherit;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar{
+    height:76px;
+    border-bottom:1px solid #1d2a40;
+    background:rgba(13,21,38,.92);
+    backdrop-filter:blur(18px);
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.nav-inner{
+    max-width:var(--max);
+    height:100%;
+    margin:auto;
+    padding:0 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:700;
+    letter-spacing:-1px;
+}
+
+.logo span{
+    color:var(--blue);
+}
+
+.logo-small{
+    display:block;
+    font-size:8px;
+    letter-spacing:.5px;
+    color:#6f88aa;
+    margin-top:-3px;
+}
+
+.nav-links{
+    display:flex;
+    align-items:center;
+    gap:34px;
+    margin-left:70px;
+}
+
+.nav-links a{
+    color:#dbe3f0;
+    font-size:14px;
+    font-weight:600;
+    transition:.25s;
+}
+
+.nav-links a:hover{
+    color:#fff;
+}
+
+.nav-actions{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.language{
+    position:relative;
+}
+
+.lang-btn,
+.sign-btn{
+    height:38px;
+    padding:0 14px;
+    border-radius:7px;
+    border:1px solid var(--border);
+    background:transparent;
+    color:#e9eef7;
+    cursor:pointer;
+}
+
+.lang-btn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.lang-menu{
+    position:absolute;
+    right:0;
+    top:47px;
+    width:160px;
+    padding:7px;
+    background:#182438;
+    border:1px solid var(--border);
+    border-radius:10px;
+    box-shadow:0 20px 50px rgba(0,0,0,.4);
+    display:none;
+}
+
+.lang-menu.show{
+    display:block;
+    animation:drop .2s ease;
+}
+
+.lang-menu button{
+    width:100%;
+    padding:10px;
+    border:0;
+    border-radius:6px;
+    background:transparent;
+    color:#dbe3f0;
+    text-align:left;
+    cursor:pointer;
+}
+
+.lang-menu button:hover{
+    background:#25344c;
+}
+
+.primary-btn{
+    border:0;
+    background:var(--blue);
+    color:white;
+    padding:11px 19px;
+    border-radius:7px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.primary-btn:hover{
+    background:#5293fa;
+    transform:translateY(-1px);
+}
+
+.menu-toggle{
+    display:none;
+    border:1px solid var(--border);
+    background:transparent;
+    color:white;
+    width:40px;
+    height:40px;
+    border-radius:7px;
+    font-size:20px;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+    max-width:var(--max);
+    margin:auto;
+    padding:95px 28px 70px;
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    gap:65px;
+    align-items:center;
+}
+
+.eyebrow{
+    color:#3986ff;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.4px;
+    margin-bottom:16px;
+}
+
+.hero h1{
+    font-size:clamp(42px,5vw,70px);
+    line-height:.98;
+    letter-spacing:-3px;
+    max-width:700px;
+}
+
+.hero h1 span{
+    color:#8da7ca;
+}
+
+.hero p{
+    margin-top:25px;
+    max-width:620px;
+    color:#8fa4c3;
+    font-size:18px;
+    line-height:1.65;
+}
+
+.hero-buttons{
+    margin-top:32px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.secondary-btn{
+    padding:12px 19px;
+    border-radius:7px;
+    border:1px solid var(--border);
+    background:#131f32;
+    color:#e8edf6;
+    cursor:pointer;
+    font-weight:600;
+}
+
+/* ================= UPLOAD CARD ================= */
+
+.upload-card{
+    background:linear-gradient(145deg,#19263a,#152136);
+    border:1px solid #293a54;
+    border-radius:14px;
+    padding:25px;
+    box-shadow:0 30px 80px rgba(0,0,0,.22);
+    animation:float 5s ease-in-out infinite;
+}
+
+.upload-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.upload-top h3{
+    font-size:20px;
+}
+
+.secure{
+    font-size:12px;
+    color:#67d8ba;
+}
+
+.drop-zone{
+    border:1px dashed #426083;
+    border-radius:11px;
+    min-height:270px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:25px;
+    cursor:pointer;
+    background:rgba(12,22,39,.45);
+    transition:.3s;
+}
+
+.drop-zone:hover,
+.drop-zone.dragover{
+    border-color:var(--blue);
+    background:rgba(52,120,235,.08);
+}
+
+.upload-icon{
+    width:58px;
+    height:58px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:50%;
+    background:#1c3458;
+    color:#5b9aff;
+    font-size:25px;
+    margin-bottom:15px;
+}
+
+.drop-zone h4{
+    font-size:17px;
+    margin-bottom:7px;
+}
+
+.drop-zone p{
+    color:#8093ae;
+    font-size:13px;
+}
+
+.file-input{
+    display:none;
+}
+
+.file-preview{
+    margin-top:15px;
+    display:none;
+    background:#111d30;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:13px;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.file-info{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.file-icon{
+    color:#4e91ff;
+}
+
+.remove-file{
+    border:0;
+    background:transparent;
+    color:#ff7379;
+    cursor:pointer;
+}
+
+.analyze-btn{
+    width:100%;
+    margin-top:14px;
+    height:48px;
+    border:0;
+    border-radius:8px;
+    background:var(--blue);
+    color:white;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.analyze-btn:hover{
+    background:#5695f7;
+}
+
+/* ================= TRUST BAR ================= */
+
+.trust{
+    border-top:1px solid #1c2a40;
+    border-bottom:1px solid #1c2a40;
+    background:#101a2c;
+}
+
+.trust-inner{
+    max-width:var(--max);
+    margin:auto;
+    padding:22px 28px;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.trust-item{
+    color:#8497b3;
+    font-size:13px;
+}
+
+.trust-item strong{
+    color:#dfe7f3;
+}
+
+/* ================= SECTION ================= */
+
+.section{
+    max-width:var(--max);
+    margin:auto;
+    padding:95px 28px;
+}
+
+.section-title{
+    max-width:650px;
+    margin-bottom:45px;
+}
+
+.section-title .eyebrow{
+    margin-bottom:10px;
+}
+
+.section-title h2{
+    font-size:42px;
+    letter-spacing:-1.7px;
+}
+
+.section-title p{
+    margin-top:14px;
+    color:var(--muted);
+    line-height:1.6;
+}
+
+/* ================= HEALTH GRAPH ================= */
+
+.health-dashboard{
+    display:grid;
+    grid-template-columns:1.5fr .8fr;
+    gap:20px;
+}
+
+.graph-card,
+.stat-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:13px;
+}
+
+.graph-card{
+    padding:25px;
+}
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.card-header h3{
+    font-size:18px;
+}
+
+.legend{
+    display:flex;
+    gap:15px;
+    font-size:11px;
+    color:#8294af;
+}
+
+.dot{
+    display:inline-block;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    margin-right:5px;
+}
+
+.red{background:#ff525b}
+.blue{background:#4388ff}
+.green{background:#26d5ac}
+
+.graph{
+    height:260px;
+    position:relative;
+    overflow:hidden;
+    border-radius:8px;
+    background:
+        linear-gradient(#25354c 1px,transparent 1px),
+        linear-gradient(90deg,#25354c 1px,transparent 1px);
+    background-size:20% 25%;
+}
+
+.graph svg{
+    width:100%;
+    height:100%;
+}
+
+.stats{
+    display:grid;
+    gap:20px;
+}
+
+.stat-card{
+    padding:24px;
+}
+
+.stat-card .number{
+    font-size:32px;
+    font-weight:800;
+}
+
+.stat-card p{
+    color:#8799b3;
+    margin-top:7px;
+    font-size:13px;
+}
+
+/* ================= FEATURES ================= */
+
+.features{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+}
+
+.feature{
+    padding:25px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    transition:.3s;
+}
+
+.feature:hover{
+    transform:translateY(-5px);
+    border-color:#3c5880;
+}
+
+.feature-icon{
+    width:42px;
+    height:42px;
+    border-radius:9px;
+    background:#203453;
+    color:#5b98ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:18px;
+}
+
+.feature h3{
+    font-size:17px;
+    margin-bottom:8px;
+}
+
+.feature p{
+    color:#8295b0;
+    font-size:14px;
+    line-height:1.6;
+}
+
+/* ================= HOW IT WORKS ================= */
+
+.steps{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.step{
+    position:relative;
+    padding:28px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#131f32;
+}
+
+.step-number{
+    color:#4388ff;
+    font-size:13px;
+    font-weight:800;
+}
+
+.step h3{
+    margin-top:15px;
+    margin-bottom:9px;
+}
+
+.step p{
+    color:#8295b0;
+    font-size:14px;
+    line-height:1.6;
+}
+
+/* ================= RESULTS ================= */
+
+#resultsSection{
+    display:none;
+}
+
+.results-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.result-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:23px;
+}
+
+.result-card.full{
+    grid-column:1/-1;
+}
+
+.result-card h3{
+    margin-bottom:14px;
+}
+
+.result-card p,
+.result-card li{
+    color:#9aabc2;
+    line-height:1.6;
+    font-size:14px;
+}
+
+.result-card ul{
+    padding-left:18px;
+}
+
+.result-item{
+    padding:12px;
+    margin-bottom:9px;
+    border-radius:8px;
+    background:#121e31;
+    border:1px solid #24334b;
+}
+
+.result-item strong{
+    color:#eaf0f8;
+}
+
+/* ================= LOADING ================= */
+
+.loading{
+    display:none;
+    margin-top:18px;
+}
+
+.loading-text{
+    display:flex;
+    justify-content:space-between;
+    color:#91a4bf;
+    font-size:13px;
+    margin-bottom:8px;
+}
+
+.progress{
+    height:5px;
+    background:#25344b;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    width:0;
+    height:100%;
+    background:linear-gradient(90deg,#2877f3,#2cc3d7);
+    transition:width .4s ease;
+}
+
+/* ================= COOKIE ================= */
+
+.cookie{
+    position:fixed;
+    bottom:18px;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(760px,calc(100% - 30px));
+    background:#192437;
+    border:1px solid #2a3b56;
+    border-radius:12px;
+    padding:20px;
+    z-index:2000;
+    box-shadow:0 25px 80px rgba(0,0,0,.5);
+    display:flex;
+    gap:16px;
+    align-items:center;
+    animation:cookieIn .5s ease;
+}
+
+.cookie-icon{
+    min-width:43px;
+    height:43px;
+    border-radius:50%;
+    background:#1b355c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.cookie-content{
+    flex:1;
+}
+
+.cookie h3{
+    font-size:17px;
+    margin-bottom:5px;
+}
+
+.cookie p{
+    color:#8c9eb8;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.cookie-actions{
+    display:flex;
+    gap:8px;
+}
+
+.cookie button{
+    border:1px solid #31435e;
+    background:#142033;
+    color:white;
+    padding:10px 15px;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+.cookie .accept{
+    background:var(--blue);
+    border-color:var(--blue);
+}
+
+/* ================= FOOTER ================= */
+
+footer{
+    border-top:1px solid #1c2a40;
+    padding:35px 28px;
+    color:#71839e;
+    font-size:13px;
+}
+
+.footer-inner{
+    max-width:var(--max);
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes float{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-7px)}
+}
+
+@keyframes cookieIn{
+    from{
+        opacity:0;
+        transform:translate(-50%,30px);
+    }
+    to{
+        opacity:1;
+        transform:translate(-50%,0);
+    }
+}
+
+@keyframes drop{
+    from{
+        opacity:0;
+        transform:translateY(-5px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ================= TABLET ================= */
+
+@media(max-width:900px){
+
+    .nav-links{
+        display:none;
+    }
+
+    .menu-toggle{
+        display:block;
+    }
+
+    .nav-actions .sign-btn,
+    .nav-actions .primary-btn{
+        display:none;
+    }
+
+    .hero{
+        grid-template-columns:1fr;
+        padding-top:65px;
+    }
+
+    .health-dashboard{
+        grid-template-columns:1fr;
+    }
+
+    .features,
+    .steps{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:600px){
+
+    .navbar{
+        height:68px;
+    }
+
+    .nav-inner{
+        padding:0 17px;
+    }
+
+    .logo{
+        font-size:21px;
+    }
+
+    .hero{
+        padding:55px 18px 45px;
+        gap:40px;
+    }
+
+    .hero h1{
+        font-size:43px;
+        letter-spacing:-2px;
+    }
+
+    .hero p{
+        font-size:15px;
+    }
+
+    .hero-buttons{
+        flex-direction:column;
+    }
+
+    .hero-buttons button{
+        width:100%;
+    }
+
+    .upload-card{
+        padding:17px;
+    }
+
+    .drop-zone{
+        min-height:220px;
+    }
+
+    .section{
+        padding:65px 18px;
+    }
+
+    .section-title h2{
+        font-size:32px;
+    }
+
+    .features,
+    .steps,
+    .results-grid{
+        grid-template-columns:1fr;
+    }
+
+    .result-card.full{
+        grid-column:auto;
+    }
+
+    .trust-inner{
+        padding:18px;
+        flex-direction:column;
+    }
+
+    .cookie{
+        bottom:10px;
+        width:calc(100% - 20px);
+        flex-direction:column;
+        align-items:stretch;
+        padding:16px;
+    }
+
+    .cookie-actions{
+        display:grid;
+        grid-template-columns:1fr 1fr 1fr;
+    }
+
+    .cookie button{
+        padding:9px 5px;
+        font-size:11px;
+    }
+
+    .footer-inner{
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+<div class="nav-inner">
+
+    <a href="#" class="logo">
+        Med<span>AI</span>
+        <small class="logo-small">UNDERSTAND YOUR HEALTH</small>
+    </a>
+
+    <div class="nav-links">
+        <a href="#features" data-i18n="features">Features</a>
+        <a href="#how" data-i18n="how">How It Works</a>
+        <a href="#insights" data-i18n="insights">Health Insights</a>
+        <a href="#privacy" data-i18n="privacy">Privacy</a>
+    </div>
+
+    <div class="nav-actions">
+
+        <div class="language">
+            <button class="lang-btn" onclick="toggleLanguages()">
+                🌐 <span id="currentLanguage">English</span> ▾
+            </button>
+
+            <div class="lang-menu" id="languageMenu">
+                <button onclick="changeLanguage('en')">🇬🇧 English</button>
+                <button onclick="changeLanguage('ar')">🇦🇪 العربية</button>
+                <button onclick="changeLanguage('hi')">🇮🇳 हिन्दी</button>
+                <button onclick="changeLanguage('ml')">🇮🇳 മലയാളം</button>
+            </div>
+        </div>
+
+        <button class="sign-btn">Sign In</button>
+
+        <button class="primary-btn"
+                onclick="document.getElementById('reportInput').click()">
+            ↑ Upload Report
+        </button>
+
+        <button class="menu-toggle" onclick="mobileMenu()">
+            ☰
+        </button>
+
+    </div>
+</div>
+</nav>
+
+
+<!-- HERO -->
+<section class="hero">
+
+<div>
+    <div class="eyebrow" data-i18n="eyebrow">
+        YOUR HEALTH, MADE SIMPLE
+    </div>
+
+    <h1 data-i18n="heroTitle">
+        Your medical report.<br>
+        <span>Made easier to understand.</span>
+    </h1>
+
+    <p data-i18n="heroText">
+        MedAI organizes information from your medical report into
+        simple sections so you can better understand your results,
+        medications and important follow-up information.
+    </p>
+
+    <div class="hero-buttons">
+        <button class="primary-btn"
+                onclick="document.getElementById('reportInput').click()"
+                data-i18n="uploadReport">
+            Upload Your Report
+        </button>
+
+        <button class="secondary-btn"
+                onclick="document.getElementById('how').scrollIntoView()"
+                data-i18n="learnMore">
+            See How It Works
+        </button>
+    </div>
+</div>
+
+
+<!-- UPLOAD -->
+<div class="upload-card">
+
+    <div class="upload-top">
+        <h3 data-i18n="analyzeReport">Analyze a report</h3>
+        <span class="secure">🔒 Secure</span>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+
+        <div class="upload-icon">↑</div>
+
+        <h4 data-i18n="dropTitle">
+            Drop your medical report here
+        </h4>
+
+        <p data-i18n="dropText">
+            PDF files are supported
+        </p>
+
+        <button class="secondary-btn"
+                onclick="document.getElementById('reportInput').click()"
+                style="margin-top:18px">
+            Choose File
+        </button>
+
+        <input
+            type="file"
+            id="reportInput"
+            class="file-input"
+            accept=".pdf"
+        >
+    </div>
+
+    <div class="file-preview" id="filePreview">
+
+        <div class="file-info">
+            <span class="file-icon">📄</span>
+            <div>
+                <strong id="fileName">Report.pdf</strong>
+                <div id="fileSize"
+                     style="font-size:11px;color:#71849f">
+                </div>
+            </div>
+        </div>
+
+        <button class="remove-file" onclick="removeFile()">
+            Remove
+        </button>
+
+    </div>
+
+    <button class="analyze-btn"
+            id="analyzeBtn"
+            onclick="analyzeReport()"
+            data-i18n="analyze">
+        Analyze Report
+    </button>
+
+    <div class="loading" id="loading">
+
+        <div class="loading-text">
+            <span id="loadingText">Preparing report...</span>
+            <span id="loadingPercent">0%</span>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- TRUST -->
+<div class="trust">
+<div class="trust-inner">
+
+    <div class="trust-item">
+        <strong>PDF</strong> report support
+    </div>
+
+    <div class="trust-item">
+        <strong>AI-assisted</strong> organization
+    </div>
+
+    <div class="trust-item">
+        <strong>Multiple</strong> languages
+    </div>
+
+    <div class="trust-item">
+        <strong>Mobile</strong> responsive
+    </div>
+
+</div>
+</div>
+
+
+<!-- HEALTH INSIGHTS -->
+<section class="section" id="insights">
+
+<div class="section-title">
+    <div class="eyebrow">GLOBAL HEALTH</div>
+
+    <h2 data-i18n="healthTitle">
+        Health is a story, not just a number.
+    </h2>
+
+    <p>
+        Explore general health information and trends from around
+        the world. These statistics are for educational purposes.
+    </p>
+</div>
+
+
+<div class="health-dashboard">
+
+<div class="graph-card">
+
+    <div class="card-header">
+        <h3>Your Health Journey</h3>
+
+        <div class="legend">
+            <span><i class="dot red"></i>LDL</span>
+            <span><i class="dot blue"></i>HbA1c</span>
+            <span><i class="dot green"></i>Vitamin D</span>
+        </div>
+    </div>
+
+    <div class="graph">
+
+        <svg viewBox="0 0 600 260"
+             preserveAspectRatio="none">
+
+            <polyline
+                points="0,190 100,165 200,175 300,125 400,140 500,95 600,105"
+                fill="none"
+                stroke="#ff525b"
+                stroke-width="4"/>
+
+            <polyline
+                points="0,220 100,215 200,190 300,195 400,165 500,150 600,125"
+                fill="none"
+                stroke="#4388ff"
+                stroke-width="4"/>
+
+            <polyline
+                points="0,240 100,230 200,220 300,185 400,200 500,165 600,145"
+                fill="none"
+                stroke="#26d5ac"
+                stroke-width="4"/>
+
+        </svg>
+
+    </div>
+
+</div>
+
+
+<div class="stats">
+
+    <div class="stat-card">
+        <div class="number">73.3</div>
+        <p>Global life expectancy in recent WHO estimates</p>
+    </div>
+
+    <div class="stat-card">
+        <div class="number">74%</div>
+        <p>Approximate share of global deaths caused by NCDs</p>
+    </div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- FEATURES -->
+<section class="section" id="features">
+
+<div class="section-title">
+    <div class="eyebrow">MEDAI</div>
+
+    <h2 data-i18n="featureTitle">
+        Everything important, in one place.
+    </h2>
+
+    <p>
+        Turn complicated report information into organized,
+        easier-to-read sections.
+    </p>
+</div>
+
+
+<div class="features">
+
+<div class="feature">
+    <div class="feature-icon">⌁</div>
+    <h3>Test Results</h3>
+    <p>
+        Organize test names, reported values and reference ranges
+        from the uploaded report.
+    </p>
+</div>
+
+<div class="feature">
+    <div class="feature-icon">Rx</div>
+    <h3>Medications</h3>
+    <p>
+        Identify medications mentioned in the report and show
+        the stated purpose when available.
+    </p>
+</div>
+
+<div class="feature">
+    <div class="feature-icon">+</div>
+    <h3>Conditions</h3>
+    <p>
+        Highlight conditions or diagnoses that are explicitly
+        mentioned in the report.
+    </p>
+</div>
+
+<div class="feature">
+    <div class="feature-icon">✓</div>
+    <h3>Simple Summary</h3>
+    <p>
+        Get an easy-to-read overview of the information contained
+        in the document.
+    </p>
+</div>
+
+<div class="feature">
+    <div class="feature-icon">→</div>
+    <h3>Follow-up Items</h3>
+    <p>
+        Surface follow-up instructions or questions mentioned
+        in the report.
+    </p>
+</div>
+
+<div class="feature">
+    <div class="feature-icon">?</div>
+    <h3>Information Gaps</h3>
+    <p>
+        Show information that may be missing from the uploaded
+        report.
+    </p>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+
+<div class="section-title">
+    <div class="eyebrow">HOW IT WORKS</div>
+
+    <h2>
+        From report to understanding.
+    </h2>
+</div>
+
+
+<div class="steps">
+
+<div class="step">
+    <div class="step-number">01</div>
+    <h3>Upload</h3>
+    <p>
+        Upload a PDF medical report from your phone, tablet
+        or computer.
+    </p>
+</div>
+
+<div class="step">
+    <div class="step-number">02</div>
+    <h3>Analyze</h3>
+    <p>
+        MedAI processes the document and organizes the information
+        into useful categories.
+    </p>
+</div>
+
+<div class="step">
+    <div class="step-number">03</div>
+    <h3>Understand</h3>
+    <p>
+        Review the organized information in a cleaner,
+        easier-to-read format.
+    </p>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- RESULTS -->
+<section class="section" id="resultsSection">
+
+<div class="section-title">
+    <div class="eyebrow">YOUR REPORT</div>
+    <h2>Report overview</h2>
+</div>
+
+<div class="results-grid">
+
+    <div class="result-card full">
+        <h3>Summary</h3>
+        <p id="summary"></p>
+    </div>
+
+    <div class="result-card">
+        <h3>Medications</h3>
+        <div id="medications"></div>
+    </div>
+
+    <div class="result-card">
+        <h3>Conditions</h3>
+        <div id="conditions"></div>
+    </div>
+
+    <div class="result-card">
+        <h3>Reported Results</h3>
+        <div id="abnormalResults"></div>
+    </div>
+
+    <div class="result-card">
+        <h3>Follow-up</h3>
+        <div id="followUp"></div>
+    </div>
+
+    <div class="result-card full">
+        <h3>Information Gaps</h3>
+        <div id="missingInfo"></div>
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- PRIVACY -->
+<section class="section" id="privacy">
+
+<div class="section-title">
+
+    <div class="eyebrow">IMPORTANT</div>
+
+    <h2>Your report deserves context.</h2>
+
+    <p>
+        MedAI is designed to organize and explain information
+        contained in medical reports. It does not diagnose diseases,
+        determine whether someone is completely healthy, or tell
+        users to change their medication.
+    </p>
+
+</div>
+
+</section>
+
+
+<footer>
+
+<div class="footer-inner">
+
+    <div>
+        © 2026 MedAI
+    </div>
+
+    <div>
+        AI-assisted medical report organization • Educational use
+    </div>
+
+</div>
+
+</footer>
+
+
+<!-- COOKIE POPUP -->
+<div class="cookie" id="cookiePopup">
+
+    <div class="cookie-icon">🍪</div>
+
+    <div class="cookie-content">
+
+        <h3>We use cookies</h3>
+
+        <p>
+            We use cookies and similar technologies to improve
+            your experience and understand how the website is used.
+        </p>
+
+    </div>
+
+    <div class="cookie-actions">
+
+        <button onclick="closeCookie()">
+            Customize
+        </button>
+
+        <button onclick="closeCookie()">
+            Reject All
+        </button>
+
+        <button class="accept" onclick="acceptCookies()">
+            Accept All
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ================= LANGUAGE ================= */
+
+const translations = {
+
+    en:{
+        features:"Features",
+        how:"How It Works",
+        insights:"Health Insights",
+        privacy:"Privacy",
+        eyebrow:"YOUR HEALTH, MADE SIMPLE",
+        heroTitle:"Your medical report.<br><span>Made easier to understand.</span>",
+        heroText:"MedAI organizes information from your medical report into simple sections so you can better understand your results, medications and important follow-up information.",
+        uploadReport:"Upload Your Report",
+        learnMore:"See How It Works",
+        analyzeReport:"Analyze a report",
+        dropTitle:"Drop your medical report here",
+        dropText:"PDF files are supported",
+        analyze:"Analyze Report",
+        healthTitle:"Health is a story, not just a number.",
+        featureTitle:"Everything important, in one place."
+    },
+
+    ar:{
+        features:"المميزات",
+        how:"كيف يعمل",
+        insights:"معلومات صحية",
+        privacy:"الخصوصية",
+        eyebrow:"صحتك بطريقة أبسط",
+        heroTitle:"تقريرك الطبي.<br><span>أسهل للفهم.</span>",
+        heroText:"يساعدك MedAI على تنظيم المعلومات الموجودة في تقريرك الطبي إلى أقسام بسيطة وسهلة القراءة.",
+        uploadReport:"رفع التقرير",
+        learnMore:"كيف يعمل",
+        analyzeReport:"تحليل التقرير",
+        dropTitle:"ضع تقريرك الطبي هنا",
+        dropText:"ملفات PDF مدعومة",
+        analyze:"تحليل التقرير",
+        healthTitle:"الصحة قصة وليست مجرد رقم.",
+        featureTitle:"كل المعلومات المهمة في مكان واحد."
+    },
+
+    hi:{
+        features:"विशेषताएँ",
+        how:"यह कैसे काम करता है",
+        insights:"स्वास्थ्य जानकारी",
+        privacy:"गोपनीयता",
+        eyebrow:"आपका स्वास्थ्य, आसान तरीके से",
+        heroTitle:"आपकी मेडिकल रिपोर्ट।<br><span>समझने में आसान।</span>",
+        heroText:"MedAI आपकी मेडिकल रिपोर्ट की जानकारी को आसान सेक्शन में व्यवस्थित करता है।",
+        uploadReport:"रिपोर्ट अपलोड करें",
+        learnMore:"यह कैसे काम करता है",
+        analyzeReport:"रिपोर्ट का विश्लेषण",
+        dropTitle:"अपनी मेडिकल रिपोर्ट यहाँ डालें",
+        dropText:"PDF फाइलें समर्थित हैं",
+        analyze:"रिपोर्ट का विश्लेषण करें",
+        healthTitle:"स्वास्थ्य सिर्फ एक संख्या नहीं है।",
+        featureTitle:"सारी महत्वपूर्ण जानकारी एक जगह।"
+    },
+
+    ml:{
+        features:"സവിശേഷതകൾ",
+        how:"എങ്ങനെ പ്രവർത്തിക്കുന്നു",
+        insights:"ആരോഗ്യ വിവരങ്ങൾ",
+        privacy:"സ്വകാര്യത",
+        eyebrow:"നിങ്ങളുടെ ആരോഗ്യം, ലളിതമായി",
+        heroTitle:"നിങ്ങളുടെ മെഡിക്കൽ റിപ്പോർട്ട്.<br><span>എളുപ്പത്തിൽ മനസ്സിലാക്കാം.</span>",
+        heroText:"നിങ്ങളുടെ മെഡിക്കൽ റിപ്പോർട്ടിലെ വിവരങ്ങൾ ലളിതമായ വിഭാഗങ്ങളായി ക്രമീകരിക്കാൻ MedAI സഹായിക്കുന്നു.",
+        uploadReport:"റിപ്പോർട്ട് അപ്‌ലോഡ് ചെയ്യുക",
+        learnMore:"എങ്ങനെ പ്രവർത്തിക്കുന്നു",
+        analyzeReport:"റിപ്പോർട്ട് വിശകലനം ചെയ്യുക",
+        dropTitle:"നിങ്ങളുടെ മെഡിക്കൽ റിപ്പോർട്ട് ഇവിടെ ഇടുക",
+        dropText:"PDF ഫയലുകൾ പിന്തുണയ്ക്കുന്നു",
+        analyze:"റിപ്പോർട്ട് വിശകലനം ചെയ്യുക",
+        healthTitle:"ആരോഗ്യം ഒരു സംഖ്യ മാത്രമല്ല.",
+        featureTitle:"പ്രധാനപ്പെട്ട എല്ലാ വിവരങ്ങളും ഒരിടത്ത്."
+    }
+
+};
+
+function toggleLanguages(){
+
+    document
+        .getElementById("languageMenu")
+        .classList.toggle("show");
+
+}
+
+function changeLanguage(lang){
+
+    const t = translations[lang];
+
+    document.querySelectorAll("[data-i18n]").forEach(el=>{
+
+        const key = el.getAttribute("data-i18n");
+
+        if(t[key]){
+            el.innerHTML = t[key];
+        }
+
+    });
+
+    const names = {
+        en:"English",
+        ar:"العربية",
+        hi:"हिन्दी",
+        ml:"മലയാളം"
+    };
+
+    document.getElementById("currentLanguage").textContent =
+        names[lang];
+
+    document.documentElement.dir =
+        lang === "ar" ? "rtl" : "ltr";
+
+    document.getElementById("languageMenu")
+        .classList.remove("show");
+
+    localStorage.setItem("medai-language",lang);
+}
+
+
+/* ================= FILE UPLOAD ================= */
+
+const input = document.getElementById("reportInput");
+const dropZone = document.getElementById("dropZone");
+
+input.addEventListener("change",function(){
+
+    if(this.files.length){
+        showFile(this.files[0]);
+    }
+
+});
+
+dropZone.addEventListener("dragover",e=>{
+    e.preventDefault();
+    dropZone.classList.add("dragover");
+});
+
+dropZone.addEventListener("dragleave",()=>{
+    dropZone.classList.remove("dragover");
+});
+
+dropZone.addEventListener("drop",e=>{
+
+    e.preventDefault();
+
+    dropZone.classList.remove("dragover");
+
+    const file = e.dataTransfer.files[0];
+
+    if(file && file.type === "application/pdf"){
+        input.files = e.dataTransfer.files;
+        showFile(file);
+    }
+
+});
+
+function showFile(file){
+
+    document.getElementById("filePreview").style.display="flex";
+
+    document.getElementById("fileName").textContent =
+        file.name;
+
+    document.getElementById("fileSize").textContent =
+        (file.size / 1024 / 1024).toFixed(2) + " MB";
+
+}
+
+function removeFile(){
+
+    input.value="";
+
+    document.getElementById("filePreview").style.display="none";
+
+}
+
+
+/* ================= ANALYSIS ================= */
+
+async function analyzeReport(){
+
+    if(!input.files.length){
+
+        alert("Please upload a PDF report first.");
+
+        return;
+    }
+
+    const file = input.files[0];
+
+    const loading =
+        document.getElementById("loading");
+
+    const bar =
+        document.getElementById("progressBar");
+
+    const percent =
+        document.getElementById("loadingPercent");
+
+    const text =
+        document.getElementById("loadingText");
+
+    const button =
+        document.getElementById("analyzeBtn");
+
+    loading.style.display="block";
+
+    button.disabled=true;
+
+    const steps=[
+        ["Reading report...",20],
+        ["Finding test results...",40],
+        ["Organizing medications...",60],
+        ["Preparing summary...",80],
+        ["Almost finished...",95]
+    ];
+
+    for(const step of steps){
+
+        text.textContent=step[0];
+
+        bar.style.width=step[1]+"%";
+
+        percent.textContent=step[1]+"%";
+
+        await new Promise(
+            resolve=>setTimeout(resolve,500)
+        );
+
+    }
+
+    const formData = new FormData();
+
+    formData.append("report",file);
+
+    try{
+
+        const response =
+            await fetch("/analyze",{
+                method:"POST",
+                body:formData
+            });
+
+        const data = await response.json();
+
+        renderResults(data);
+
+        bar.style.width="100%";
+        percent.textContent="100%";
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Something went wrong while analyzing the report."
+        );
+
+    }
+
+    button.disabled=false;
+
+}
+
+
+/* ================= RESULTS ================= */
+
+function escapeHTML(value){
+
+    if(value === null || value === undefined){
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function renderResults(data){
+
+    document.getElementById("resultsSection")
+        .style.display="block";
+
+    document.getElementById("summary")
+        .textContent=data.summary || "No summary available.";
+
+    const medications =
+        document.getElementById("medications");
+
+    medications.innerHTML="";
+
+    if(data.medications && data.medications.length){
+
+        data.medications.forEach(med=>{
+
+            medications.innerHTML += `
+                <div class="result-item">
+                    <strong>${escapeHTML(med.name)}</strong>
+                    <br>
+                    ${escapeHTML(med.purpose || "")}
+                </div>
+            `;
+
+        });
+
+    }else{
+
+        medications.innerHTML =
+            "<p>No medications identified.</p>";
+
+    }
+
+
+    const conditions =
+        document.getElementById("conditions");
+
+    conditions.innerHTML="";
+
+    if(data.conditions && data.conditions.length){
+
+        data.conditions.forEach(condition=>{
+
+            conditions.innerHTML += `
+                <div class="result-item">
+                    ${escapeHTML(condition)}
+                </div>
+            `;
+
+        });
+
+    }else{
+
+        conditions.innerHTML =
+            "<p>No conditions identified.</p>";
+
+    }
+
+
+    const abnormal =
+        document.getElementById("abnormalResults");
+
+    abnormal.innerHTML="";
+
+    if(data.abnormal_results &&
+       data.abnormal_results.length){
+
+        data.abnormal_results.forEach(item=>{
+
+            abnormal.innerHTML += `
+                <div class="result-item">
+                    <strong>${escapeHTML(item.test)}</strong><br>
+                    Value: ${escapeHTML(item.value)}<br>
+                    Reference: ${escapeHTML(item.reference_range)}<br>
+                    ${escapeHTML(item.interpretation)}
+                </div>
+            `;
+
+        });
+
+    }else{
+
+        abnormal.innerHTML =
+            "<p>No flagged results were returned.</p>";
+
+    }
+
+
+    const followUp =
+        document.getElementById("followUp");
+
+    followUp.innerHTML="";
+
+    if(data.follow_up && data.follow_up.length){
+
+        data.follow_up.forEach(item=>{
+
+            followUp.innerHTML += `
+                <div class="result-item">
+                    ${escapeHTML(item)}
+                </div>
+            `;
+
+        });
+
+    }else{
+
+        followUp.innerHTML =
+            "<p>No follow-up items identified.</p>";
+
+    }
+
+
+    const missing =
+        document.getElementById("missingInfo");
+
+    missing.innerHTML="";
+
+    if(data.missing_information &&
+       data.missing_information.length){
+
+        data.missing_information.forEach(item=>{
+
+            missing.innerHTML += `
+                <div class="result-item">
+                    ${escapeHTML(item)}
+                </div>
+            `;
+
+        });
+
+    }else{
+
+        missing.innerHTML =
+            "<p>No missing information identified.</p>";
+
+    }
+
+
+    document.getElementById("resultsSection")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
+
+}
+
+
+/* ================= COOKIES ================= */
+
+function acceptCookies(){
+
+    localStorage.setItem(
+        "medai-cookies",
+        "accepted"
+    );
+
+    document.getElementById("cookiePopup")
+        .style.display="none";
+}
+
+function closeCookie(){
+
+    document.getElementById("cookiePopup")
+        .style.display="none";
+}
+
+
+/* ================= STARTUP ================= */
+
+window.addEventListener("load",()=>{
+
+    const savedLanguage =
+        localStorage.getItem("medai-language");
+
+    if(savedLanguage){
+        changeLanguage(savedLanguage);
+    }
+
+    if(
+        localStorage.getItem("medai-cookies")
+        === "accepted"
+    ){
+
+        document.getElementById("cookiePopup")
+            .style.display="none";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
